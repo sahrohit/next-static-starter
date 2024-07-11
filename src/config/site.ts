@@ -17,7 +17,7 @@ export const siteConfig: SiteConfig = {
     "Together",
   ],
   url: {
-    base: env.NEXT_PUBLIC_APP_URL,
+    base: env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000",
     author: "https://sahrohit.com.np",
   },
   ogImage: `/opengraph-image.jpg`,
