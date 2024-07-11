@@ -20,28 +20,38 @@ jobs:
 
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4.1.7
         with:
           fetch-depth: 0
 
-      - uses: pnpm/action-setup@v2.2.4
+      - name: Cache pnpm store
+        uses: actions/cache@v4.0.2
+        with:
+          path: ~/.pnpm-store
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - uses: pnpm/action-setup@v4.0.0
         with:
           version: 8
 
       - name: Use Node ${{ matrix.node }}
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4.0.2
         with:
           node-version: ${{ matrix.node }}
           cache: "pnpm"
 
-      - name: Install deps (with cache)
+      - name: Install deps
         run: pnpm install
 
-      - name: Next.js cache
-        uses: actions/cache@v3
+      - name: Cache Next.js build
+        uses: actions/cache@v4.0.2
         with:
-          path: ${{ github.workspace }}/.next/cache
-          key: ${{ matrix.os }}-${{ matrix.node }}-${{ hashFiles('**/pnpm-lock.yaml') }}-nextjs
+          path: .next/cache
+          key: ${{ runner.os }}-nextjs-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-nextjs-
 
       - name: Lint
         run: pnpm lint
